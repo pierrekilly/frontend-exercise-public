@@ -1,3 +1,9 @@
+const KEY = {
+  ARROW_UP: "ArrowUp",
+  ARROW_DOWN: "ArrowDown",
+  ENTER: "Enter"
+}
+
 export default class Autocomplete {
   constructor(rootEl, options = {}) {
     options = Object.assign({ numOfResults: 10 }, options);
@@ -53,6 +59,17 @@ export default class Autocomplete {
   updateDropdown(results) {
     this.listEl.innerHTML = '';
     this.listEl.appendChild(this.createResultsEl(results));
+
+    if (results && results.length) {
+      this.listEl.style.visibility = "visible";
+    } else {
+      this.listEl.style.visibility = "hidden";
+    }
+  }
+
+  selectValue(result) {
+    const { onSelect } = this.options;
+    if (typeof onSelect === 'function') onSelect(result.value);
   }
 
   createResultsEl(results) {
@@ -66,9 +83,16 @@ export default class Autocomplete {
 
       // Pass the value to the onSelect callback
       el.addEventListener('click', (event) => {
-        const { onSelect } = this.options;
-        if (typeof onSelect === 'function') onSelect(result.value);
+        this.selectValue(result)
       });
+
+      el.addEventListener("keydown", event => {
+        if (event.code === KEY.ENTER) {
+          this.selectValue(result)
+        }
+      })
+
+      el.setAttribute("tabindex", "0")
 
       fragment.appendChild(el);
     });
@@ -96,7 +120,58 @@ export default class Autocomplete {
 
     // Build results dropdown
     this.listEl = document.createElement('ul');
+    this.listEl.style.visibility = "hidden"
     Object.assign(this.listEl, { className: 'results' });
     this.rootEl.appendChild(this.listEl);
+
+    this.rootEl.addEventListener("keydown", event => {
+      if (event.code !== KEY.ARROW_UP && event.code !== KEY.ARROW_DOWN) {
+        return;
+      }
+      event.preventDefault();
+
+      let results = this.listEl.getElementsByTagName("li")
+
+      let noFocus = true;
+      switch (event.code) {
+        case KEY.ARROW_UP:
+          for (let i in results) {
+            let index = parseInt(i);
+            if (document.activeElement === results[index]) {
+              if (index - 1 >= 0) {
+                noFocus = false;
+                let nextIndex = index - 1;
+                results[nextIndex].focus();
+              }
+              break;
+            }
+          }
+
+          if (noFocus) {
+            results[results.length - 1].focus();
+          }
+          break;
+        case KEY.ARROW_DOWN:
+          for (let i in results) {
+            let index = parseInt(i);
+            if (document.activeElement === results[index]) {
+              if (results.length - 1 > index) {
+                noFocus = false;
+                let nextIndex = index + 1;
+                results[nextIndex].focus();
+              }
+              break;
+            }
+          }
+
+          if (noFocus) {
+            results[0].focus();
+          }
+          break;
+        // case KEY.ENTER:
+        //   console.log("Enter");
+        //   break;
+      }
+    });
   }
 }

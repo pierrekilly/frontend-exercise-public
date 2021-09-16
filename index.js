@@ -16,7 +16,7 @@ import './main.css';
 // });
 
 // Pokemons
-new Autocomplete(document.getElementById('pokemon'), {
+new Autocomplete(document.getElementById("pokemon"), {
   onSelect: (pokemon) => {
     console.log('Selected Pokemon:', pokemon);
   },
