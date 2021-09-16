@@ -113,6 +113,28 @@ export default class Autocomplete {
     return inputEl;
   }
 
+  moveSelection(results, moveDown) {
+    let noFocus = true;
+
+    for (let i in results) {
+      let index = parseInt(i);
+      if (document.activeElement === results[index]) {
+        const hasNext = moveDown ? results.length - 1 > index : index - 1 >= 0;
+        if (hasNext) {
+          noFocus = false;
+          let nextIndex = moveDown ? index + 1 : index - 1;
+          results[nextIndex].focus();
+        }
+        break;
+      }
+    }
+
+    if (noFocus) {
+      const defaultIndex = moveDown ? 0 : results.length - 1;
+      results[defaultIndex].focus();
+    }
+  }
+
   init() {
     // Build query input
     this.inputEl = this.createQueryInputEl();
@@ -132,45 +154,13 @@ export default class Autocomplete {
 
       let results = this.listEl.getElementsByTagName("li")
 
-      let noFocus = true;
       switch (event.code) {
         case KEY.ARROW_UP:
-          for (let i in results) {
-            let index = parseInt(i);
-            if (document.activeElement === results[index]) {
-              if (index - 1 >= 0) {
-                noFocus = false;
-                let nextIndex = index - 1;
-                results[nextIndex].focus();
-              }
-              break;
-            }
-          }
-
-          if (noFocus) {
-            results[results.length - 1].focus();
-          }
+          this.moveSelection(results, false);
           break;
         case KEY.ARROW_DOWN:
-          for (let i in results) {
-            let index = parseInt(i);
-            if (document.activeElement === results[index]) {
-              if (results.length - 1 > index) {
-                noFocus = false;
-                let nextIndex = index + 1;
-                results[nextIndex].focus();
-              }
-              break;
-            }
-          }
-
-          if (noFocus) {
-            results[0].focus();
-          }
+          this.moveSelection(results, true);
           break;
-        // case KEY.ENTER:
-        //   console.log("Enter");
-        //   break;
       }
     });
   }
