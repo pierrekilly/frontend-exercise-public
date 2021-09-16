@@ -1,5 +1,6 @@
 const path = require('path');
 const outputPath = path.resolve(__dirname, 'dist');
+const pokemonList = require("./pokemon-list.json");
 
 module.exports = {
   entry: {
@@ -30,6 +31,17 @@ module.exports = {
 
   devServer: {
     publicPath: '/dist/',
+    before: function(app) {
+      app.get("/api/pokemon", function(req, res) {
+        let matchingPokemons = []
+        pokemonList.forEach(pokemon => {
+          pokemon.name.toLowerCase().includes(req.query.name.toLowerCase()) ? matchingPokemons.push(pokemon) : null;
+        })
+
+        res.json(matchingPokemons);
+      });
+    },
+    open: true
   },
 
   devtool: 'cheap-module-source-map',

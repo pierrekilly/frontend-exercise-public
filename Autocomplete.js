@@ -1,14 +1,36 @@
 export default class Autocomplete {
   constructor(rootEl, options = {}) {
-    options = Object.assign({ numOfResults: 10, data: [] }, options);
+    options = Object.assign({ numOfResults: 10 }, options);
     Object.assign(this, { rootEl, options });
 
     this.init();
   }
 
-  onQueryChange(query) {
+  async onQueryChange(query) {
+    let results = [];
+
+    if (!query) {
+      this.updateDropdown(results);
+      return;
+    }
+
     // Get data for the dropdown
-    let results = this.getResults(query, this.options.data);
+    if (this.options.data) {
+      results = this.getResults(query, this.options.data);
+    } else if (this.options.queryUrl && this.options.queryField) {
+      let queryResult = await fetch(`${this.options.queryUrl}?${this.options.queryField}=${query}`).then(data => {
+        return data.json();
+      })
+      queryResult.forEach(entry => {
+        results.push({
+          text: entry[this.options.queryField],
+          value: entry
+        });
+      });
+    } else {
+      throw new Error("You need to provide either data or a query url and a query field");
+    }
+
     results = results.slice(0, this.options.numOfResults);
 
     this.updateDropdown(results);
