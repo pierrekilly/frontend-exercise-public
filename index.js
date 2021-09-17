@@ -2,7 +2,6 @@ import Autocomplete from './Autocomplete';
 import usStates from './us-states';
 import './main.css';
 
-
 // US States
 const data = usStates.map(state => ({
   text: state.name,
@@ -14,7 +13,6 @@ new Autocomplete(document.getElementById('state'), {
     console.log('selected state:', stateCode);
   },
 });
-
 
 // Github Users
 // new Autocomplete(document.getElementById('gh-user'), {

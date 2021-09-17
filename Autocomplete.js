@@ -18,14 +18,13 @@ export default class Autocomplete {
    * Given an array and a query, return a filtered array based on the query.
    */
   getResults(query, data) {
-    if (!query) return [];
+    if (!query)
+      return [];
 
     // Filter for matching strings
-    let results = data.filter((item) => {
+    return data.filter((item) => {
       return item.text.toLowerCase().includes(query.toLowerCase());
     });
-
-    return results;
   }
 
   updateDropdown(results) {
