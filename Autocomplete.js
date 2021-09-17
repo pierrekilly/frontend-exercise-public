@@ -116,8 +116,12 @@ export default class Autocomplete {
     this.inputEl.addEventListener("focus", () => {
       if (!this.listEl.children.length) {
         selectedResult = null
+        return
       }
 
+      if (selectedResult) {
+        selectedResult.classList.remove(selectedClass)
+      }
       selectedResult = this.listEl.children[0]
       selectedResult.classList.add(selectedClass)
     })
