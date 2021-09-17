@@ -25,7 +25,7 @@ export default class Autocomplete {
     }
 
     // From static data
-    results = this.getResults(query, this.options.data);
+    results = this.getResults(query, this.getSelectorData(this.options.data));
     results = results.slice(0, this.options.numOfResults);
 
     this.updateDropdown(results);
