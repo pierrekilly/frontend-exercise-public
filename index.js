@@ -22,10 +22,10 @@ new Autocomplete(document.getElementById('gh-user'), {
   urlFactory: (query, limit) => {
     return `https://api.github.com/search/users?q=${query}&per_page=${limit}`
   },
-  resultSelector: {
+  dataSelector: {
     resultsKey: "items",
-    valueKey: "login",
-    idKey: "id"
+    textKey: "id",
+    valueKey: "login"
   },
 
   onSelect: (ghUserId) => {

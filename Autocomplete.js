@@ -49,7 +49,7 @@ export default class Autocomplete {
   async getResultsFromUrl(url) {
     const response = await fetch(url).then(resp => resp.json())
 
-    return response[this.options.resultSelector.resultsKey]
+    return response[this.options.dataSelector.resultsKey]
 
     for (const [key, value] of Object.entries(response)) {
       if (Array.isArray(value)) {
@@ -66,8 +66,8 @@ export default class Autocomplete {
    */
   getSelectorData(results) {
     return results.map((res) => ({
-      text: _.get(res, this.options.resultSelector.textKey),
-      value: _.get(res, this.options.resultSelector.valueKey)
+      text: _.get(res, this.options.dataSelector.textKey),
+      value: _.get(res, this.options.dataSelector.valueKey)
     }))
   }
 
