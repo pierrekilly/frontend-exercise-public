@@ -1,4 +1,5 @@
 import usStates from "./us-states.json";
+import _ from "lodash";
 
 export default class Autocomplete {
   constructor(rootEl, options = {}) {
@@ -17,8 +18,7 @@ export default class Autocomplete {
     if (this.options.url || this.options.urlFactory) {
       let url = this.options.url || this.options.urlFactory(query, this.options.numOfResults)
       this.getResultsFromUrl(url).then(results => {
-        results = results.map(res => ({ text: res[this.options.resultSelector.valueKey], value: res[this.options.resultSelector.valueKey] })).slice(0, this.options.numOfResults)
-        this.updateDropdown(results)
+        this.updateDropdown(this.getSelectorData(results))
       })
 
       return
@@ -57,6 +57,17 @@ export default class Autocomplete {
     }
 
     return []
+  }
+
+  /**
+   * Converts results to objects used to pre-populate the dropdown list
+   * @param results
+   */
+  getSelectorData(results) {
+    return results.slice(0, this.options.numOfResults).map((res) => ({
+      text: _.get(res, this.options.resultSelector.valueKey),
+      value: _.get(res, this.options.resultSelector.valueKey)
+    }))
   }
 
   updateDropdown(results) {
