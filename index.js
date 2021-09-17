@@ -28,7 +28,6 @@ new Autocomplete(document.getElementById("gh-user"), {
 		textKey: "login",
 		valueKey: "id"
 	},
-
 	onSelect: (ghUserId) => {
 		console.log("selected github user id:", ghUserId)
 	},
