@@ -1,4 +1,5 @@
 import Autocomplete from './Autocomplete';
+import {QueryType} from "./Autocomplete";
 import usStates from './us-states';
 import './main.css';
 
@@ -15,8 +16,9 @@ new Autocomplete(document.getElementById('state'), {
 });
 
 // Github Users
-// new Autocomplete(document.getElementById('gh-user'), {
-//   onSelect: (ghUserId) => {
-//     console.log('selected github user id:', ghUserId);
-//   },
-// });
+new Autocomplete(document.getElementById('gh-user'), {
+  onSelect: (ghUserId) => {
+    console.log('selected github user id:', ghUserId);
+  },
+  type: QueryType.ENDPOINT
+});

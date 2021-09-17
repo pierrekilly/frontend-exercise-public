@@ -1,14 +1,42 @@
+export const QueryType = Object.freeze({
+  DATA_SOURCE: 1,
+  ENDPOINT:    2,
+})
+
 export default class Autocomplete {
   constructor(rootEl, options = {}) {
-    options = Object.assign({ numOfResults: 10, data: [] }, options);
+    options = Object.assign({
+      numOfResults: 10,
+      data: []
+    }, options);
+
     Object.assign(this, { rootEl, options });
 
     this.init();
   }
 
-  onQueryChange(query) {
+  async onQueryChange(query) {
+    let dataSet = null
+
+    switch (this.options.type) {
+      case QueryType.ENDPOINT:
+        let url = `https://api.github.com/search/users?q=${query}&per_page=${this.options.numOfResults}`
+        await fetch(url)
+            .then(res => res.json())
+            .then(data => dataSet = data.items.map(item => ({
+              text: item.login,
+              value: item.id
+            })))
+            .catch(err => console.log(`error occurred, likely rate limited: ${err}`))
+        console.log(dataSet)
+            break
+      default:
+        dataSet = this.options.data
+            break
+    }
+
     // Get data for the dropdown
-    let results = this.getResults(query, this.options.data);
+    let results = this.getResults(query, dataSet);
     results = results.slice(0, this.options.numOfResults);
 
     this.updateDropdown(results);
