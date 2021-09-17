@@ -65,6 +65,7 @@ export default class Autocomplete {
 
   updateDropdown(results) {
     this.listEl.innerHTML = '';
+    this.listEl.hidden = results.length === 0
     this.listEl.appendChild(this.createResultsEl(results.slice(0, this.options.numOfResults)));
   }
 
@@ -84,7 +85,7 @@ export default class Autocomplete {
       });
 
       document.addEventListener('keyup', (event) => {
-        if (event.code !== "Enter" || !el.classList.contains("selected")) {
+        if (event.code !== "Enter" || !el.classList.contains(selectedClass)) {
           return
         }
 
@@ -127,7 +128,7 @@ export default class Autocomplete {
 
     // Build results dropdown
     this.listEl = document.createElement('ul');
-    Object.assign(this.listEl, { className: 'results' });
+    Object.assign(this.listEl, { className: 'results', hidden: true });
     this.rootEl.appendChild(this.listEl);
 
     // Fetch data
