@@ -14,6 +14,10 @@ export default class Autocomplete {
     if (this.options.external) {
       let ret = null
       let url = this.buildUrl(query, this.options.numOfResults)
+
+      if (!query)
+        return ret;
+      
       await fetch(url)
           .then(res => res.json())
           .then(data => ret = data.items.map(item => ({
