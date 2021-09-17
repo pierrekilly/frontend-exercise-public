@@ -10,25 +10,17 @@ export default class Autocomplete {
   }
 
   onQueryChange(query) {
-    let results = [];
-
     // Get data for the dropdown
-
-    // From the endpoint
-    if (this.options.url || this.options.urlFactory) {
-      let url = this.options.url || this.options.urlFactory(query, this.options.numOfResults)
-      this.getResultsFromUrl(url).then(results => {
-        this.updateDropdown(this.getSelectorData(results))
+    if (this.options.urlFactory) {
+      let url = this.options.urlFactory(query, this.options.numOfResults)
+      this.getDataFromUrl(url).then(data => {
+        let results = this.getResults(query, data)
+        this.updateDropdown(results)
       })
-
       return
     }
 
-    // From static data
-    let selectorData = this.getSelectorData(this.options.data)
-    results = this.getResults(query, selectorData);
-    results = results.slice(0, this.options.numOfResults);
-
+    let results = this.getResults(query, this.options.data);
     this.updateDropdown(results);
   }
 
@@ -46,34 +38,23 @@ export default class Autocomplete {
     return results;
   }
 
-  async getResultsFromUrl(url) {
-    const response = await fetch(url).then(resp => resp.json())
+  async getDataFromUrl(url) {
+    const resp = await fetch(url).then(resp => resp.json())
 
-    return response[this.options.dataSelector.resultsKey]
-
-    for (const [key, value] of Object.entries(response)) {
-      if (Array.isArray(value)) {
-        return value
-      }
+    let data = resp
+    if (this.options.dataSelector.dataKey) {
+      data = _.get(resp, this.options.dataSelector.dataKey)
     }
 
-    return []
-  }
-
-  /**
-   * Converts results to objects used to pre-populate the dropdown list
-   * @param results
-   */
-  getSelectorData(results) {
-    return results.map((res) => ({
-      text: _.get(res, this.options.dataSelector.textKey),
-      value: _.get(res, this.options.dataSelector.valueKey)
+    return data.map((entry) => ({
+      text: _.get(entry, this.options.dataSelector.textKey),
+      value: _.get(entry, this.options.dataSelector.valueKey)
     }))
   }
 
   updateDropdown(results) {
     this.listEl.innerHTML = '';
-    this.listEl.appendChild(this.createResultsEl(results));
+    this.listEl.appendChild(this.createResultsEl(results.slice(0, this.options.numOfResults)));
   }
 
   createResultsEl(results) {
@@ -104,8 +85,17 @@ export default class Autocomplete {
       autocomplete: 'off',
     });
 
-    inputEl.addEventListener('input', event =>
-      this.onQueryChange(event.target.value));
+    let timeoutID = null
+    inputEl.addEventListener('input', event => {
+      // Debounce
+      if (timeoutID) {
+        clearTimeout(timeoutID)
+      }
+
+      timeoutID = setTimeout(() => {
+        this.onQueryChange(event.target.value)
+      }, 1000)
+    })
 
     return inputEl;
   }
@@ -119,5 +109,12 @@ export default class Autocomplete {
     this.listEl = document.createElement('ul');
     Object.assign(this.listEl, { className: 'results' });
     this.rootEl.appendChild(this.listEl);
+
+    // Fetch data
+    if (this.options.url) {
+      this.getDataFromUrl(this.options.url).then(data => {
+        this.options.data = data
+      })
+    }
   }
 }

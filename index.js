@@ -23,9 +23,9 @@ new Autocomplete(document.getElementById('gh-user'), {
     return `https://api.github.com/search/users?q=${query}&per_page=${limit}`
   },
   dataSelector: {
-    resultsKey: "items",
-    textKey: "id",
-    valueKey: "login"
+    dataKey: "items",
+    textKey: "login",
+    valueKey: "id"
   },
 
   onSelect: (ghUserId) => {
