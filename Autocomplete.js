@@ -29,6 +29,8 @@ export default class Autocomplete {
   }
 
   updateDropdown(results) {
+    this.listEl.style.display = results.length ? "block" : "none"
+
     this.listEl.innerHTML = '';
     this.listEl.appendChild(this.createResultsEl(results));
   }
