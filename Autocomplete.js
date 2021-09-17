@@ -1,5 +1,7 @@
 import _ from "lodash";
 
+const selectedClass = "selected"
+
 export default class Autocomplete {
   constructor(rootEl, options = {}) {
     options = Object.assign({ numOfResults: 10, data: [] }, options);
@@ -127,20 +129,16 @@ export default class Autocomplete {
   }
 
   handleArrowNavigation() {
-    const selectedClass = "selected"
-    let selectedResult = null
-
     this.inputEl.addEventListener("focus", () => {
       if (!this.listEl.children.length) {
-        selectedResult = null
         return
       }
 
-      if (selectedResult) {
-        selectedResult.classList.remove(selectedClass)
-      }
-      selectedResult = this.listEl.children[0]
-      selectedResult.classList.add(selectedClass)
+      this.listEl.children[0].classList.add(selectedClass)
+    })
+
+    this.inputEl.addEventListener("blur", () => {
+      this.clearSelected()
     })
 
     // Set up arrow navigation
@@ -152,26 +150,23 @@ export default class Autocomplete {
 
       // Nothing to select
       if (!this.listEl.children.length) {
-        selectedResult = null
         return
       }
 
       // Select first element
+      let selectedResult = this.getSelected()
       if (!selectedResult) {
-        selectedResult = this.listEl.children[0]
-        selectedResult.classList.add(selectedClass)
+        this.listEl.children[0].classList.add(selectedClass)
         return
       }
 
       selectedResult.classList.remove(selectedClass);
       switch(event.code){
-          // Up
         case "ArrowUp":
           if (selectedResult.previousElementSibling) {
             selectedResult = selectedResult.previousElementSibling
           }
           break;
-          // Down
         case "ArrowDown":
           if (selectedResult.nextElementSibling) {
             selectedResult = selectedResult.nextElementSibling
@@ -179,6 +174,22 @@ export default class Autocomplete {
           break;
       }
       selectedResult.classList.add(selectedClass)
-    });
+    })
+  }
+
+  getSelected() {
+    for (const childEl of this.listEl.children) {
+      if (childEl.classList.contains(selectedClass)) {
+        return childEl
+      }
+    }
+
+    return null
+  }
+
+  clearSelected() {
+    for (const childEl of this.listEl.children) {
+      childEl.classList.remove(selectedClass)
+    }
   }
 }
