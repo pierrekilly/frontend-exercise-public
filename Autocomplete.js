@@ -14,10 +14,10 @@ export default class Autocomplete {
     // Get data for the dropdown
 
     // From the endpoint
-    if (this.options.url) {
-      let url = `https://api.github.com/search/users?q=${query}&per_page=${this.options.numOfResults}`
+    if (this.options.url || this.options.urlFactory) {
+      let url = this.options.url || this.options.urlFactory(query, this.options.numOfResults)
       this.getResultsFromUrl(url).then(results => {
-        results = results.map(res => ({ text: res.login, value: res.login })).slice(0, this.options.numOfResults)
+        results = results.map(res => ({ text: res[this.options.resultSelector.valueKey], value: res[this.options.resultSelector.valueKey] })).slice(0, this.options.numOfResults)
         this.updateDropdown(results)
       })
 
@@ -47,6 +47,8 @@ export default class Autocomplete {
 
   async getResultsFromUrl(url) {
     const response = await fetch(url).then(resp => resp.json())
+
+    return response[this.options.resultSelector.resultsKey]
 
     for (const [key, value] of Object.entries(response)) {
       if (Array.isArray(value)) {
