@@ -4,12 +4,13 @@ import './main.css';
 
 
 // US States
+const data = usStates.map(state => ({
+  text: state.name,
+  value: state.abbreviation
+}));
+
 new Autocomplete(document.getElementById('state'), {
-  data: usStates,
-  resultSelector: {
-    valueKey: "abbreviation",
-    textKey: "name"
-  },
+  data: data,
   onSelect: (stateCode) => {
     console.log('selected state:', stateCode);
   },
