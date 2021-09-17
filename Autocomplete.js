@@ -38,11 +38,23 @@ export default class Autocomplete {
   }
 
   async getDataFromUrl(url) {
-    const resp = await fetch(url).then(resp => resp.json())
+    let data = []
+    try {
+      const resp = await fetch(url).
+        then(resp => {
+          if (resp.status >= 400) {
+            throw new Error("Request failed")
+          }
+        }).
+        then(resp => resp.json())
 
-    let data = resp
-    if (this.options.dataSelector.dataKey) {
-      data = _.get(resp, this.options.dataSelector.dataKey)
+      if (this.options.dataSelector.dataKey) {
+        data = _.get(resp, this.options.dataSelector.dataKey) || []
+      } else {
+        data = resp
+      }
+    } catch(err) {
+      return []
     }
 
     return data.map((entry) => ({
