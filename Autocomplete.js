@@ -45,6 +45,8 @@ export default class Autocomplete {
 					if (resp.status >= 400) {
 						throw new Error("Request failed")
 					}
+
+					return resp
 				}).
 				then(resp => resp.json())
 
