@@ -11,31 +11,22 @@ export default class Autocomplete {
   }
 
   async collectData(query) {
-    if (this.options.external) {
+    if (this.options.loadExternalData) {
       let ret = null
-      let url = this.buildUrl(query, this.options.numOfResults)
 
       if (!query)
         return ret;
-      
-      await fetch(url)
-          .then(res => res.json())
-          .then(data => ret = data.items.map(item => ({
-            text: item.login,
-            value: item.id
-          })))
-          .catch(err => console.log(`error occurred, likely rate limited: ${err}`))
+
+      await this.options.loadExternalData(query, this.options.numOfResults)
+          .then(data => {
+            ret = data
+          })
 
       return ret
-    } else {
+    }
+     else {
       return this.options.data
     }
-  }
-
-  buildUrl(query) {
-    let e = this.options.external
-    return `${e.baseUrl}?${e.queryParam}=${query}`
-    // TODO use limiterParam
   }
 
   onQueryChange(query) {

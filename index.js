@@ -17,10 +17,15 @@ new Autocomplete(document.getElementById('state'), {
 
 // Github Users
 new Autocomplete(document.getElementById('gh-user'), {
-  external: {
-    baseUrl: "https://api.github.com/search/users",
-    queryParam: "q",
-    limiterParam: "per_page"
+  loadExternalData: (query, limit) => {
+    return fetch(`https://api.github.com/search/users?q=${encodeURI(query)}&per_page=${limit}`)
+        .then(res => res.json())
+        .then((data) => {
+          return data.items.map(item => ({
+            text: item.login,
+            value: item.id
+          }))
+        })
   },
   onSelect: (ghUserId) => {
     console.log('selected github user id:', ghUserId);
