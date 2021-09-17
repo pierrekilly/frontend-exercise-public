@@ -66,6 +66,10 @@ export default class Autocomplete {
 	}
 
 	updateDropdown(results) {
+		// Remove event listeners on result elements
+		for (const childEl of this.listEl.children) {
+			childEl.removeEventListeners()
+		}
 		this.listEl.innerHTML = ""
 		this.listEl.hidden = results.length === 0
 		this.listEl.appendChild(this.createResultsEl(results.slice(0, this.options.numOfResults)))
@@ -73,27 +77,35 @@ export default class Autocomplete {
 
 	createResultsEl(results) {
 		const fragment = document.createDocumentFragment()
+
 		results.forEach((result) => {
 			const el = document.createElement("li")
-			Object.assign(el, {
-				className: "result",
-				textContent: result.text,
-			})
-
-			// Pass the value to the onSelect callback
-			el.addEventListener("click", () => {
+			const clickListener = () => {
 				const { onSelect } = this.options
 				if (typeof onSelect === "function") onSelect(result.value)
-			})
+			}
 
-			document.addEventListener("keyup", (event) => {
+			const keyupListener = (event) => {
 				if (event.code !== "Enter" || !el.classList.contains(selectedClass)) {
 					return
 				}
 
 				const { onSelect } = this.options
 				if (typeof onSelect === "function") onSelect(result.value)
+			}
+
+			Object.assign(el, {
+				className: "result",
+				textContent: result.text,
+				removeEventListeners: () => {
+					el.removeEventListener("click", clickListener)
+					document.removeEventListener("keyup", keyupListener)
+				}
 			})
+
+			// Pass the value to the onSelect callback
+			el.addEventListener("click", clickListener)
+			document.addEventListener("keyup", keyupListener)
 
 			fragment.appendChild(el)
 		})
