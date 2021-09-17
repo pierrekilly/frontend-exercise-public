@@ -106,6 +106,7 @@ export default class Autocomplete {
 
     this.selectedItem = null
 
+    // TODO: Simplify this
     this.rootEl.addEventListener("keydown", (e) => {
       switch (e.code) {
         case "ArrowUp":
