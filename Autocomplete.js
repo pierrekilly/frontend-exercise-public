@@ -75,6 +75,7 @@ export default class Autocomplete {
       Object.assign(el, {
         className: 'result',
         textContent: result.text,
+        valueContent: result.value
       });
 
       // Pass the value to the onSelect callback
@@ -140,7 +141,7 @@ export default class Autocomplete {
           }
           break
         case "Enter":
-          this.options.onSelect(this.selectedItem.textContent)
+          this.options.onSelect(this.selectedItem.valueContent)
           break
       }
     });
