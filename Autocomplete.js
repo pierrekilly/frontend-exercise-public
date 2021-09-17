@@ -1,8 +1,3 @@
-export const QueryType = Object.freeze({
-  DATA_SOURCE: 1,
-  ENDPOINT:    2,
-})
-
 export default class Autocomplete {
   constructor(rootEl, options = {}) {
     options = Object.assign({
@@ -15,31 +10,38 @@ export default class Autocomplete {
     this.init();
   }
 
-  async onQueryChange(query) {
-    let dataSet = null
+  async collectData(query) {
+    if (this.options.external) {
+      let ret = null
+      let url = this.buildUrl(query, this.options.numOfResults)
+      await fetch(url)
+          .then(res => res.json())
+          .then(data => ret = data.items.map(item => ({
+            text: item.login,
+            value: item.id
+          })))
+          .catch(err => console.log(`error occurred, likely rate limited: ${err}`))
 
-    switch (this.options.type) {
-      case QueryType.ENDPOINT:
-        let url = `https://api.github.com/search/users?q=${query}&per_page=${this.options.numOfResults}`
-        await fetch(url)
-            .then(res => res.json())
-            .then(data => dataSet = data.items.map(item => ({
-              text: item.login,
-              value: item.id
-            })))
-            .catch(err => console.log(`error occurred, likely rate limited: ${err}`))
-        console.log(dataSet)
-            break
-      default:
-        dataSet = this.options.data
-            break
+      return ret
+    } else {
+      return this.options.data
     }
+  }
 
-    // Get data for the dropdown
-    let results = this.getResults(query, dataSet);
-    results = results.slice(0, this.options.numOfResults);
+  buildUrl(query) {
+    let e = this.options.external
+    return `${e.baseUrl}?${e.queryParam}=${query}`
+    // TODO use limiterParam
+  }
 
-    this.updateDropdown(results);
+  onQueryChange(query) {
+    this.collectData(query).then((data) => {
+      // Get data for the dropdown
+      let results = this.getResults(query, data);
+      results = results.slice(0, this.options.numOfResults);
+
+      this.updateDropdown(results);
+    })
   }
 
   /**
