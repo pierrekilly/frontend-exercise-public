@@ -1,4 +1,3 @@
-import usStates from "./us-states.json";
 import _ from "lodash";
 
 export default class Autocomplete {
@@ -31,11 +30,9 @@ export default class Autocomplete {
     if (!query) return [];
 
     // Filter for matching strings
-    let results = data.filter((item) => {
+    return data.filter((item) => {
       return item.text.toLowerCase().includes(query.toLowerCase());
     });
-
-    return results;
   }
 
   async getDataFromUrl(url) {
@@ -67,7 +64,16 @@ export default class Autocomplete {
       });
 
       // Pass the value to the onSelect callback
-      el.addEventListener('click', (event) => {
+      el.addEventListener('click', () => {
+        const { onSelect } = this.options;
+        if (typeof onSelect === 'function') onSelect(result.value);
+      });
+
+      document.addEventListener('keyup', (event) => {
+        if (event.code !== "Enter" || !el.classList.contains("selected")) {
+          return
+        }
+
         const { onSelect } = this.options;
         if (typeof onSelect === 'function') onSelect(result.value);
       });
@@ -110,6 +116,17 @@ export default class Autocomplete {
     Object.assign(this.listEl, { className: 'results' });
     this.rootEl.appendChild(this.listEl);
 
+    // Fetch data
+    if (this.options.url) {
+      this.getDataFromUrl(this.options.url).then(data => {
+        this.options.data = data
+      })
+    }
+
+    this.handleArrowNavigation()
+  }
+
+  handleArrowNavigation() {
     const selectedClass = "selected"
     let selectedResult = null
 
@@ -163,12 +180,5 @@ export default class Autocomplete {
       }
       selectedResult.classList.add(selectedClass)
     });
-
-    // Fetch data
-    if (this.options.url) {
-      this.getDataFromUrl(this.options.url).then(data => {
-        this.options.data = data
-      })
-    }
   }
 }
