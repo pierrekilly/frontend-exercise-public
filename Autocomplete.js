@@ -110,6 +110,56 @@ export default class Autocomplete {
     Object.assign(this.listEl, { className: 'results' });
     this.rootEl.appendChild(this.listEl);
 
+    const selectedClass = "selected"
+    let selectedResult = null
+
+    this.inputEl.addEventListener("focus", () => {
+      if (!this.listEl.children.length) {
+        selectedResult = null
+      }
+
+      selectedResult = this.listEl.children[0]
+      selectedResult.classList.add(selectedClass)
+    })
+
+    // Set up arrow navigation
+    document.addEventListener("keydown", (event) => {
+      // Ignore if not in focus
+      if (this.inputEl !== document.activeElement) {
+        return
+      }
+
+      // Nothing to select
+      if (!this.listEl.children.length) {
+        selectedResult = null
+        return
+      }
+
+      // Select first element
+      if (!selectedResult) {
+        selectedResult = this.listEl.children[0]
+        selectedResult.classList.add(selectedClass)
+        return
+      }
+
+      selectedResult.classList.remove(selectedClass);
+      switch(event.code){
+          // Up
+        case "ArrowUp":
+          if (selectedResult.previousElementSibling) {
+            selectedResult = selectedResult.previousElementSibling
+          }
+          break;
+          // Down
+        case "ArrowDown":
+          if (selectedResult.nextElementSibling) {
+            selectedResult = selectedResult.nextElementSibling
+          }
+          break;
+      }
+      selectedResult.classList.add(selectedClass)
+    });
+
     // Fetch data
     if (this.options.url) {
       this.getDataFromUrl(this.options.url).then(data => {
