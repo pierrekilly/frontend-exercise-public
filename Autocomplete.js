@@ -111,5 +111,38 @@ export default class Autocomplete {
     this.listEl = document.createElement('ul');
     Object.assign(this.listEl, { className: 'results' });
     this.rootEl.appendChild(this.listEl);
+
+    this.selectedItem = null
+
+    this.rootEl.addEventListener("keydown", (e) => {
+      switch (e.code) {
+        case "ArrowUp":
+          if (this.selectedItem) {
+            if (this.selectedItem === this.listEl.firstChild) {
+              break
+            }
+            this.selectedItem.classList.remove("selected")
+            this.selectedItem = this.selectedItem.previousElementSibling
+            this.selectedItem.classList.add("selected")
+          }
+          break
+        case "ArrowDown":
+          if (!this.selectedItem) {
+            this.selectedItem = this.listEl.firstChild
+            this.selectedItem.classList.add("selected")
+          } else {
+            if (this.selectedItem === this.listEl.lastChild) {
+              break
+            }
+            this.selectedItem.classList.remove("selected")
+            this.selectedItem = this.selectedItem.nextElementSibling
+            this.selectedItem.classList.add("selected")
+          }
+          break
+        case "Enter":
+          this.options.onSelect(this.selectedItem.textContent)
+          break
+      }
+    });
   }
 }

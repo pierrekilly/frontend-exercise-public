@@ -35,6 +35,8 @@ ul {
   background-color: #eee;
 }
 
+.selected { background-color: #eee; }
+
 .form-group + .form-group {
   margin-left: 50px;
 }
