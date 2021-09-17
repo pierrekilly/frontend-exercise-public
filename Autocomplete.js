@@ -25,7 +25,8 @@ export default class Autocomplete {
     }
 
     // From static data
-    results = this.getResults(query, this.getSelectorData(this.options.data));
+    let selectorData = this.getSelectorData(this.options.data)
+    results = this.getResults(query, selectorData);
     results = results.slice(0, this.options.numOfResults);
 
     this.updateDropdown(results);
@@ -64,8 +65,8 @@ export default class Autocomplete {
    * @param results
    */
   getSelectorData(results) {
-    return results.slice(0, this.options.numOfResults).map((res) => ({
-      text: _.get(res, this.options.resultSelector.valueKey),
+    return results.map((res) => ({
+      text: _.get(res, this.options.resultSelector.textKey),
       value: _.get(res, this.options.resultSelector.valueKey)
     }))
   }

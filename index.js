@@ -8,7 +8,7 @@ new Autocomplete(document.getElementById('state'), {
   data: usStates,
   resultSelector: {
     valueKey: "abbreviation",
-    idKey: "name"
+    textKey: "name"
   },
   onSelect: (stateCode) => {
     console.log('selected state:', stateCode);
