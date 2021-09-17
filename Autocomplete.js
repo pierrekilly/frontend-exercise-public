@@ -1,3 +1,5 @@
+import usStates from "./us-states.json";
+
 export default class Autocomplete {
   constructor(rootEl, options = {}) {
     options = Object.assign({ numOfResults: 10, data: [] }, options);
@@ -7,8 +9,23 @@ export default class Autocomplete {
   }
 
   onQueryChange(query) {
+    let results = [];
+
     // Get data for the dropdown
-    let results = this.getResults(query, this.options.data);
+
+    // From the endpoint
+    if (this.options.url) {
+      let url = `https://api.github.com/search/users?q=${query}&per_page=${this.options.numOfResults}`
+      this.getResultsFromUrl(url).then(results => {
+        results = results.map(res => ({ text: res.login, value: res.login })).slice(0, this.options.numOfResults)
+        this.updateDropdown(results)
+      })
+
+      return
+    }
+
+    // From static data
+    results = this.getResults(query, this.options.data);
     results = results.slice(0, this.options.numOfResults);
 
     this.updateDropdown(results);
@@ -26,6 +43,18 @@ export default class Autocomplete {
     });
 
     return results;
+  }
+
+  async getResultsFromUrl(url) {
+    const response = await fetch(url).then(resp => resp.json())
+
+    for (const [key, value] of Object.entries(response)) {
+      if (Array.isArray(value)) {
+        return value
+      }
+    }
+
+    return []
   }
 
   updateDropdown(results) {
