@@ -6,8 +6,20 @@ body {
   box-sizing: border-box;
 }
 
+.container {
+  display: flex;
+  border: 1px dashed #4b4c4e;
+  padding: 20px;
+  max-width: 500px;
+  justify-content: space-between;
+  min-height: 500px;
+  width: 100%;
+  flex-wrap: wrap;
+}
+
 .form-group {
   width: 200px;
+  margin: 5px;
 }
 
 ul {
@@ -23,13 +35,19 @@ ul {
   padding: 5px 0;
   max-height: 200px;
   overflow-y: scroll;
+  display: none;
+}
+
+.noResult {
+  padding: 5px;
 }
 
 .result {
   padding: 5px;
   cursor: pointer;
 }
-.result:hover {
+.result:hover,
+.result.active {
   background-color: #eee;
 }
 
@@ -37,13 +55,13 @@ form {
   display: flex;
 }
 
-.form-group + .form-group {
-  margin-left: 50px;
-}
-
 input {
   display: block;
   width: 100%;
   padding: 5px;
   border: 1px solid #ccc;
+}
+
+.selected-item {
+  margin-top: 15px;
 }

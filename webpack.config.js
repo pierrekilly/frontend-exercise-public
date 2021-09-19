@@ -3,7 +3,7 @@ const outputPath = path.resolve(__dirname, 'dist');
 
 module.exports = {
   entry: {
-    bundle: './index.js'
+    bundle: './src/index.js'
   },
 
   output: {
