@@ -17,14 +17,12 @@ export default class Autocomplete {
    * }
    */
   constructor(rootEl, options = {}) {
-    options = Object.assign({numOfResults: 10, data: []}, options);
-    Object.assign(this, {rootEl, options});
 
     this.results = [];
     this.focusedListElementIndex = null;
     this.query = "";
 
-    this.init();
+    this.init(rootEl, options);
   }
 
   async onQueryChange(query) {
@@ -45,21 +43,21 @@ export default class Autocomplete {
   async getResults(query) {
     if (!query) return [];
 
-    // Filter for matching strings
+    // Fetch new data based on the query
     return await this.options.getData(query);
   }
 
   updateDropdown(results) {
     this.listEl.innerHTML = '';
-    if (this.query) {
-      // render results list element with the received data
-      this.listEl.style.display = 'block';
-      this.listEl.appendChild(this.createResultsEl(results));
-    } else {
+    if (!this.query) {
       // hide results list element if there is no value typed in the input field
       this.listEl.style.display = 'none';
       this.focusedListElementIndex = null;
+      return
     }
+    // render results list element with the received data
+    this.listEl.style.display = 'block';
+    this.listEl.appendChild(this.createResultsEl(results));
   }
 
   // Reset all ongoing data from the component related to the typed input value and received results
@@ -167,7 +165,10 @@ export default class Autocomplete {
     this.inputEl.replaceWith(this.inputEl.cloneNode(true));
   }
 
-  init() {
+  init(rootEl, options) {
+    options = Object.assign({numOfResults: 10, data: []}, options);
+    Object.assign(this, {rootEl, options});
+
     // Build query input
     this.inputEl = this.createQueryInputEl();
     this.rootEl.appendChild(this.inputEl)

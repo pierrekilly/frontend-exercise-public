@@ -18,18 +18,22 @@ const dataProvider = new AsyncDataProvider(
   convertResultsToAutocompleteFormat
 );
 
+function createGithubUsersComponent(container, selectedUserElement) {
+  return new Autocomplete(container, {
+    getData: async (query) => await dataProvider.getData(query),
+    onSelect: (selectedItem) => {
+      selectedUserElement.innerHTML = `Selected User: ${selectedItem.text} (id - ${selectedItem.value})`
+    },
+  });
+}
+
 export default function renderGithubUsersAutocomplete(mainContainerId, selectedElementContainerId) {
   const container = document.getElementById(mainContainerId);
   const selectedUserElement = document.getElementById(selectedElementContainerId);
-
+console.log('container', container)
   if (container) {
-    return new Autocomplete(container, {
-      getData: async (query) => await dataProvider.getData(query),
-      onSelect: (selectedItem) => {
-        selectedUserElement.innerHTML = `Selected User: ${selectedItem.text} (id - ${selectedItem.value})`
-      },
-    });
+    return createGithubUsersComponent(container, selectedUserElement)
   }
 
-  return null
+  throw Error('There is no element with the provided id for the GithubUsers container')
 }
