@@ -19,11 +19,12 @@ me at pierre.killy@digiexam.com
 
 ## Submission
 
-1. Please fork this repository 
+1. Clone this repository.
 
-2. Commit all your changes to your fork.
+2. Commit all your changes locally.
 
-3. When you're done, contact me to let me know, along with the URL of your fork
+3. When you're done, zip the repository (without the node_modules folder) and email it to me.
+Build your email as if you were building a PR.
 
 ## Overview
 
