@@ -23,7 +23,7 @@ me at pierre.killy@digiexam.com
 
 2. Commit all your changes locally.
 
-3. When you're done, zip the repository (includ `.git`, exclude `node_modules`) and email it to me.
+3. When you're done, zip the repository (include `.git`, exclude `node_modules`) and email it to me.
 Build your email as if you were building a PR.
 
 ## Overview
