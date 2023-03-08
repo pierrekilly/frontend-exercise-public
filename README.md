@@ -15,7 +15,7 @@ code organization / enhancements you would have made with more time in the
 SOLUTION.md file.
 
 If you have any questions at any point during the exercise, please reach out to
-me at pierre.killy@digiexam.com
+me
 
 ## Submission
 
